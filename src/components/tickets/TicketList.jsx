@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 import {
   Box,
   Paper,
@@ -23,18 +23,15 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
-} from '@mui/material';
-import {
-  Chat as ChatIcon,
-  Edit as EditIcon
-} from '@mui/icons-material';
+  InputLabel,
+} from "@mui/material";
+import { Chat as ChatIcon, Edit as EditIcon } from "@mui/icons-material";
 
 function TicketList() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState(null);
-  const [noteContent, setNoteContent] = useState('');
+  const [noteContent, setNoteContent] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const { user } = useAuth();
 
@@ -44,17 +41,18 @@ function TicketList() {
 
   const fetchTickets = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const endpoint = user?.role === 'customer' ? 
-        'http://localhost:5000/api/tickets/my-tickets' : 
-        'http://localhost:5000/api/tickets/all-tickets';
-      
+      const token = localStorage.getItem("token");
+      const endpoint =
+        user?.role === "customer"
+          ? "https://altius-assignment-backend-s6ct.onrender.com/api/tickets/my-tickets"
+          : "https://altius-assignment-backend-s6ct.onrender.com/api/tickets/all-tickets";
+
       const response = await axios.get(endpoint, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       setTickets(response.data);
     } catch (error) {
-      console.error('Error fetching tickets:', error);
+      console.error("Error fetching tickets:", error);
     } finally {
       setLoading(false);
     }
@@ -62,46 +60,55 @@ function TicketList() {
 
   const handleAddNote = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.post(
-        `http://localhost:5000/api/tickets/add/${selectedTicket._id}/notes`,
+        `https://altius-assignment-backend-s6ct.onrender.com/api/tickets/add/${selectedTicket._id}/notes`,
         { content: noteContent },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setNoteContent('');
+      setNoteContent("");
       fetchTickets();
       setDialogOpen(false);
     } catch (error) {
-      console.error('Error adding note:', error);
+      console.error("Error adding note:", error);
     }
   };
 
   const handleStatusChange = async (ticketId, newStatus) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.patch(
-        `http://localhost:5000/api/tickets/update-status/${ticketId}/status`,
+        `https://altius-assignment-backend-s6ct.onrender.com/api/tickets/update-status/${ticketId}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchTickets();
     } catch (error) {
-      console.error('Error updating status:', error);
+      console.error("Error updating status:", error);
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Active': return 'primary';
-      case 'Pending': return 'warning';
-      case 'Closed': return 'error';
-      default: return 'default';
+      case "Active":
+        return "primary";
+      case "Pending":
+        return "warning";
+      case "Closed":
+        return "error";
+      default:
+        return "default";
     }
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -119,7 +126,7 @@ function TicketList() {
               <TableCell>Ticket ID</TableCell>
               <TableCell>Title</TableCell>
               <TableCell>Status</TableCell>
-              {user?.role !== 'customer' && <TableCell>Customer</TableCell>}
+              {user?.role !== "customer" && <TableCell>Customer</TableCell>}
               <TableCell>Last Updated</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -130,16 +137,18 @@ function TicketList() {
                 <TableCell>{ticket.ticketId}</TableCell>
                 <TableCell>{ticket.title}</TableCell>
                 <TableCell>
-                  {user?.role === 'customer' ? (
-                    <Chip 
-                      label={ticket.status} 
+                  {user?.role === "customer" ? (
+                    <Chip
+                      label={ticket.status}
                       color={getStatusColor(ticket.status)}
                     />
                   ) : (
                     <FormControl size="small">
                       <Select
                         value={ticket.status}
-                        onChange={(e) => handleStatusChange(ticket._id, e.target.value)}
+                        onChange={(e) =>
+                          handleStatusChange(ticket._id, e.target.value)
+                        }
                       >
                         <MenuItem value="Active">Active</MenuItem>
                         <MenuItem value="Pending">Pending</MenuItem>
@@ -148,7 +157,7 @@ function TicketList() {
                     </FormControl>
                   )}
                 </TableCell>
-                {user?.role !== 'customer' && (
+                {user?.role !== "customer" && (
                   <TableCell>{ticket.customer?.name}</TableCell>
                 )}
                 <TableCell>
@@ -170,10 +179,13 @@ function TicketList() {
         </Table>
       </TableContainer>
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>
-          Ticket Details - {selectedTicket?.ticketId}
-        </DialogTitle>
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Ticket Details - {selectedTicket?.ticketId}</DialogTitle>
         <DialogContent>
           <Typography variant="h6" gutterBottom>
             {selectedTicket?.title}

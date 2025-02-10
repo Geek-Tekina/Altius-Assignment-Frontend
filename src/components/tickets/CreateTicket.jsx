@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 import {
   Box,
   Paper,
   TextField,
   Button,
   Typography,
-  Alert
-} from '@mui/material';
+  Alert,
+} from "@mui/material";
 
 function CreateTicket() {
-  const [title, setTitle] = useState('');
-  const [error, setError] = useState('');
+  const [title, setTitle] = useState("");
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -21,22 +21,22 @@ function CreateTicket() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.post(
-        'http://localhost:5000/api/tickets/create-ticket',
+        "https://altius-assignment-backend-s6ct.onrender.com/api/tickets/create-ticket",
         { title },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSuccess(true);
       setTimeout(() => {
-        navigate('/tickets');
+        navigate("/tickets");
       }, 2000);
     } catch (error) {
-      setError(error.response?.data?.message || 'An error occurred');
+      setError(error.response?.data?.message || "An error occurred");
     }
   };
 
-  if (user?.role !== 'customer') {
+  if (user?.role !== "customer") {
     return (
       <Typography variant="h5" align="center">
         Only customers can create tickets

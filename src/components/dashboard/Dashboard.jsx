@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 import {
   Box,
   Card,
   CardContent,
   Typography,
   Grid,
-  CircularProgress
-} from '@mui/material';
+  CircularProgress,
+} from "@mui/material";
 import {
   People as PeopleIcon,
-  ConfirmationNumber as TicketIcon
-} from '@mui/icons-material';
+  ConfirmationNumber as TicketIcon,
+} from "@mui/icons-material";
 
 function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -22,24 +22,27 @@ function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/users/dashboard-stats', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "https://altius-assignment-backend-s6ct.onrender.com/api/users/dashboard-stats",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setStats(response.data);
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error("Error fetching stats:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (user?.role === 'admin') {
+    if (user?.role === "admin") {
       fetchStats();
     }
   }, [user]);
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== "admin") {
     return (
       <Typography variant="h5" align="center">
         Access Denied
@@ -49,7 +52,12 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -65,7 +73,9 @@ function Dashboard() {
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
-                <PeopleIcon sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
+                <PeopleIcon
+                  sx={{ fontSize: 40, color: "primary.main", mr: 2 }}
+                />
                 <Box>
                   <Typography color="textSecondary" gutterBottom>
                     Total Customers
@@ -82,7 +92,9 @@ function Dashboard() {
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center">
-                <TicketIcon sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
+                <TicketIcon
+                  sx={{ fontSize: 40, color: "primary.main", mr: 2 }}
+                />
                 <Box>
                   <Typography color="textSecondary" gutterBottom>
                     Total Tickets
